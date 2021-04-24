@@ -2,42 +2,76 @@ const router = require("express").Router();
 const path = require("path");
 const Workout = require('../models/Workout')
 
-
-
 router.get('/workouts', async (req, res) => {
     try {
         // console.log("let's see");
-        const lastwork = await Workout.find().sort({ _id: -1 });
-        console.log(lastwork);
-        res.json(lastwork)
-        // res.sendFile(path.join(__dirname, "../public/exercise.html"));
+        const lastWorkout = await Workout.aggregate([
+            { $sort: { _id: -1 } },
+            { $limit: 1 },
+            {
+                $addFields: {
+                    totalDuration: { $sum: '$exercises.duration' }
+                }
+            }
+        ])
+        console.log(lastWorkout);
+        res.json(lastWorkout)
     } catch (err) {
         console.log(err);
     }
 })
 
-router.get('/workouts/range', (req, res) => {
+router.put('/workouts/:id', async (req, res) => {
     try {
-        console.log("route range worked");
+        const workout = await Workout.findByIdAndUpdate(req.params.id,
+            // {
+            //     _id: req.params.id
+            // },
+            {
+                $push: { exercises: req.body }
+            },
+            {
+                new: true
+            }
+        )
+
+        res.json(workout)
+
     } catch (err) {
         console.log(err);
     }
 })
 
-router.post('/workouts', (req, res) => {
+router.post('/workouts', async (req, res) => {
     try {
-        res.send(200)
-        // res.sendFile(path.join(__dirname, "../public/exercise.html"));
-    } catch (err) {
-        console.log(err);
+        const newWorkout = await Workout.create({})
+
+        console.log(newWorkout);
+        res.json(newWorkout);
     }
-})
+    catch (err) {
+        console.log(err);
+        res.json(err);
+    }
+});
 
-
-router.put('/workouts/:id', (req, res) => {
+router.get('/workouts/range', async (req, res) => {
     try {
-        res.send(200)
-        // res.sendFile(path.join(__dirname, "../public/exercise.html"));
+        const workouts = await Workout.aggregate([
+            {
+                $addFields: {
+                    totalDuration: { $sum: '$exercises.duration' },
+                    totalWeight: { $sum: '$exercises.weight' }
+                }
+            }
+        ])
+            .sort({ _id: -1 })
+            .limit(7)
+            .sort({ day: 'asc' });
+
+        res.json(workouts)
+        console.log(workouts);
+
     } catch (err) {
         console.log(err);
     }
