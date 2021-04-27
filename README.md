@@ -9,7 +9,7 @@
 
 ## Illustration
 
-![sampleReadme](./public/assets/pictures/app-Illustration.gif)
+![sampleReadme](./public/assets/pictures/app-illustration.gif)
 
 ## Description
 
