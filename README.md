@@ -16,9 +16,9 @@
 A workout tracker app that keeps record of exercises you've made using MongoDB as datastorage
    
 ## User/Story  
-```md
+
 An app to view, create and track daily workouts.You're able to log multiple exercises in a workout on a given day. You should also be able to track the name, type, weight, sets, reps, and duration of the exercise. If the exercise is a cardio exercise, You should be able to track the distance traveled.
-```
+
 
 ## Usage
 
